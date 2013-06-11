@@ -1,5 +1,5 @@
 # Library path
-LIBROOT=../STM32VL-Discovery_Package
+LIBROOT=../../STM32VL-Discovery_Package
 
 # Source Files
 SRCS = main.c

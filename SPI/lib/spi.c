@@ -63,3 +63,7 @@ int spi_readWrite(SPI_TypeDef* SPIx, uint8_t *rbuf, const uint8_t *tbuf, int cnt
   }
   return i;
 }
+
+void spi_setPrescaler(SPI_TypeDef* SPIx, uint16_t prescaler) {
+  SPIx->CR1 = (SPIx->CR1 & ~SPI_BaudRatePrescaler_256) | prescaler;
+}

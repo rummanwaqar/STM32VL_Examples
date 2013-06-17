@@ -12,13 +12,12 @@ int main(void) {
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 
   GPIO_StructInit(&GPIO_InitStructure);
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_9;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-  spi_init(SPI1);
-  GPIO_SetBits(GPIOC, GPIO_Pin_3);
+  spi_init();
 
   if (SysTick_Config(SystemCoreClock / 1000))
     while (1);
@@ -32,7 +31,7 @@ int main(void) {
       txbuf[j] = i * 4 + j;
     }
     GPIO_WriteBit(GPIOC, GPIO_Pin_3, 0);
-    spi_readWrite(SPI1, rxbuf, txbuf, 4 );
+    spi_readWrite(rxbuf, txbuf, 4 );
     GPIO_WriteBit(GPIOC, GPIO_Pin_3, 1);
     for (j = 0; j < 4; j++)
       if(rxbuf[j] != txbuf[j])

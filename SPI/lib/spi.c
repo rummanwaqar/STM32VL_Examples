@@ -3,37 +3,32 @@
 #include <stm32f10x_gpio.h>
 #include <stm32f10x_spi.h>
 
-void spi_init() {
+void spi_init(SPI_TypeDef* SPIx) {
   GPIO_InitTypeDef GPIO_InitStructure;
   SPI_InitTypeDef SPI_InitStructure;
   
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | \
-                         RCC_APB2Periph_GPIOA | \
-                         RCC_APB2Periph_AFIO | \
-                         RCC_APB2Periph_SPI1, ENABLE);
+  if(SPIx == SPI1) {
+	  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | \
+                           RCC_APB2Periph_AFIO | \
+                           RCC_APB2Periph_SPI1, ENABLE);
 
-  GPIO_StructInit(&GPIO_InitStructure);
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_StructInit(&GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-  GPIO_StructInit(&GPIO_InitStructure);
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_StructInit(&GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-  GPIO_StructInit(&GPIO_InitStructure);
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-  GPIO_StructInit(&GPIO_InitStructure);
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
+    GPIO_StructInit(&GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+  }
 
   SPI_StructInit(&SPI_InitStructure);
   SPI_InitStructure.SPI_Direction =  SPI_Direction_2Lines_FullDuplex;
@@ -44,28 +39,26 @@ void spi_init() {
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
-  SPI_Init(SPI1, &SPI_InitStructure);
+  SPI_Init(SPIx, &SPI_InitStructure);
 
-  SPI_Cmd(SPI1, ENABLE);
-
-  GPIO_WriteBit(GPIOC, GPIO_Pin_3, 1);
+  SPI_Cmd(SPIx, ENABLE);
 }
 
-int spi_readWrite(uint8_t *rbuf, const uint8_t *tbuf, int cnt)
+int spi_readWrite(SPI_TypeDef* SPIx, uint8_t *rbuf, const uint8_t *tbuf, int cnt)
 {
   int i;
 
   for (i = 0; i < cnt; i++){
     if (tbuf) {
-      SPI_I2S_SendData(SPI1, *tbuf++);
+      SPI_I2S_SendData(SPIx, *tbuf++);
     } else {
-      SPI_I2S_SendData(SPI1, 0xff);
+      SPI_I2S_SendData(SPIx, 0xff);
     }
-    while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
+    while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_RXNE) == RESET);
     if (rbuf) {
-      *rbuf++ = SPI_I2S_ReceiveData(SPI1);
+      *rbuf++ = SPI_I2S_ReceiveData(SPIx);
     } else {
-      SPI_I2S_ReceiveData(SPI1);
+      SPI_I2S_ReceiveData(SPIx);
     }
   }
   return i;

@@ -72,8 +72,7 @@ int main(void) {
 
 void ADC1_IRQHandler(void) {
   int16_t x = ADC1->DR;
-  GPIO_WriteBit(GPIOC, GPIO_Pin_9, (ledVal) ? Bit_SET: Bit_RESET);
-  ledVal = 1 - ledVal;
+  GPIO_WriteBit(GPIOC, GPIO_Pin_9, (x > 1024) ? Bit_SET: Bit_RESET);
   ADC_ClearITPendingBit(ADC1, ADC_IT_EOC);
 } 
 

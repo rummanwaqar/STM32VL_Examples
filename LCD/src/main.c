@@ -17,14 +17,18 @@ int main(void) {
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
   lcd_init();
-  lcd_goto( 9, 2 );
+  lcd_goto( 8, 2 );
   lcd_string( "ARVP" );
+  lcd_goto( 1, 3 );
+  lcd_string( "Autonomous Robotics" );
+  lcd_goto( 3, 4 );
+  lcd_string( "Vehicle Project");
 
   while(1) {
     static int ledVal = 0;
     GPIO_WriteBit(GPIOC, GPIO_Pin_9, (ledVal) ? Bit_SET : Bit_RESET);
     ledVal = 1 - ledVal;
-    delay_ms(250);
+    delay_ms(200);
   }
 }
 

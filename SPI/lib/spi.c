@@ -28,6 +28,11 @@ void spi_init(SPI_TypeDef* SPIx) {
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
   }
 
   SPI_StructInit(&SPI_InitStructure);
@@ -37,7 +42,7 @@ void spi_init(SPI_TypeDef* SPIx) {
   SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
   SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
   SPI_Init(SPIx, &SPI_InitStructure);
 
@@ -50,15 +55,17 @@ int spi_readWrite(SPI_TypeDef* SPIx, uint8_t *rbuf, const uint8_t *tbuf, int cnt
 
   for (i = 0; i < cnt; i++){
     if (tbuf) {
-      SPI_I2S_SendData(SPIx, *tbuf++);
+      SPIx->DR = *tbuf++;
     } else {
-      SPI_I2S_SendData(SPIx, 0xff);
+      SPIx->DR = 0xff;
     }
-    while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_RXNE) == RESET);
+    GPIOA->BSRR = GPIO_Pin_1;
+    while ((SPIx->SR & SPI_I2S_FLAG_RXNE) == (uint16_t)RESET);
+    GPIOA->BRR = GPIO_Pin_1;
     if (rbuf) {
       *rbuf++ = SPI_I2S_ReceiveData(SPIx);
     } else {
-      SPI_I2S_ReceiveData(SPIx);
+      *rbuf++ = SPIx->DR;
     }
   }
   return i;

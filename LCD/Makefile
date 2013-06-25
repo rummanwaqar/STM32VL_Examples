@@ -2,10 +2,10 @@
 LIBROOT=../../STM32VL-Discovery_Package
 
 # Source Files
-SRCS = main.c spi.c
+SRCS = main.c lcd.c delay.c
 
 # Library code
-SRCS += stm32f10x_rcc.c stm32f10x_gpio.c stm32f10x_spi.c
+SRCS += stm32f10x_rcc.c stm32f10x_gpio.c
 
 # Project Name
 PROJ_NAME=$(notdir $(CURDIR))
@@ -31,7 +31,7 @@ LCSCRIPT = stm32f100.ld
 
 # Compilation Flags
 
-FULLASSERT = -DUSE_FULL_ASSERT -g -O4
+FULLASSERT = -DUSE_FULL_ASSERT -g -O0
 
 MCFLAGS = -mthumb -mcpu=cortex-m3
 CFLAGS = -D$(PTYPE) -DUSE_STDPERIPH_DRIVER $(FULLASSERT)
@@ -42,13 +42,11 @@ CFLAGS += $(MCFLAGS) -Wl,-T,$(LCSCRIPT)
 
 vpath %.c \
 src \
-lib \
 $(LIBROOT)/Utilities \
 $(LIBROOT)/Libraries/STM32F10x_StdPeriph_Driver/src
 
 CFLAGS += -I.
 CFLAGS += -Iinc
-CFLAGS += -Ilib
 CFLAGS += -I$(LIBROOT)/Utilities
 CFLAGS += -I$(LIBROOT)/Libraries/CMSIS/CM3/CoreSupport
 CFLAGS += -I$(LIBROOT)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x

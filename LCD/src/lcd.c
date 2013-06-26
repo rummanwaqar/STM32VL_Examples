@@ -30,7 +30,7 @@ void lcd_string( uint8_t * data ) {
 void lcd_char( uint8_t data ) {
   delay_us(40);
   LCD_CMD->BSRR = LCD_RS;       // RS=1 : Data
-  LCD_CMD->BRR = LCD_RW;        // RS=1 : Write
+  LCD_CMD->BRR = LCD_RW;        // RS=0 : Write
   LCD_DATA->ODR = ( LCD_DATA->ODR & 0xFF00 ) | ( data & 0x00FF ); // put data on data port
   lcd_nybble();
 }
@@ -54,8 +54,6 @@ static void lcd_nybble() {
 }
 
 static void lcd_lowLevelInit() {
-  // enable TIM6. Used for delay
-  RCC_APB1PeriphClockCmd( RCC_APB1Periph_TIM6, ENABLE );
   // enable GPIO for LCD
   RCC_APB2PeriphClockCmd( LCD_CMDCLOCK | LCD_DATACLOCK, ENABLE );
 

@@ -13,6 +13,6 @@
 #define SHIFT_RCC RCC_APB2Periph_GPIOC
 
 void shiftReg_init( void );
-void shiftReg_send( uint16_t data );
+void shiftReg_send( uint8_t data );
 
 #endif

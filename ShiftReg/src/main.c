@@ -16,11 +16,14 @@ int main(void) {
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
   shiftReg_init();
+  shiftReg_send( 1 << 15 );
   
-  shiftReg_send( 0xAA );
+  uint8_t ledVal = 0;
   
-  GPIO_SetBits( GPIOC, GPIO_Pin_9 );
   while(1) {
+    GPIO_WriteBit( GPIOC, GPIO_Pin_9, (ledVal) ? Bit_SET : Bit_RESET );
+    ledVal = 1 - ledVal;
+    delay_ms( 100 );
   }
 }
 

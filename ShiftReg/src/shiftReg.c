@@ -12,7 +12,7 @@ void shiftReg_init() {
   GPIO_Init( GPIOC, &GPIO_InitStructure );
 }
 
-void shiftReg_send( uint8_t data  ) {
+void shiftReg_send( uint16_t data  ) {
   uint8_t i, j;
 
   // set SH_CP low
@@ -20,7 +20,7 @@ void shiftReg_send( uint8_t data  ) {
   // set ST_CP low
   SHIFT_PORT->BRR = SHIFT_ST_CP;
   
-  for( i=0; i<8; i++ ) {
+  for( i=0; i<16; i++ ) {
     // set DS bit
     if( data & 0x1 )
       SHIFT_PORT->BSRR = SHIFT_DS;

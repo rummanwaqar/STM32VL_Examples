@@ -16,7 +16,8 @@ int main(void) {
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
   shiftReg_init();
-  shiftReg_send( 1 << 15 );
+  uint8_t data[5] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+  shiftReg_send( data );
   
   uint8_t ledVal = 0;
   
